@@ -1,0 +1,160 @@
+Sub Main()
+
+        'TASK 1
+        Dim count, day, HerdStrength, MilkYield As Integer
+        Dim ID, ans As String
+
+        'input and validation of herdstrength
+        Console.Write("Input the number of cows in the herd. _ ")
+        HerdStrength = Console.ReadLine()
+        While Not IsNumeric(HerdStrength) Or HerdStrength <= 0
+            Console.Write("Invalid input. Please re-enter. _ ")
+            HerdStrength = Console.ReadLine()
+        End While
+
+        'input and validation of all cow IDs
+        Dim MilkYield(HerdStrength, 7), ID(HerdStrength)
+        Console.WriteLine("Please input the ID code of every cow: ")
+        For count = 1 To HerdStrength
+            Console.Write("Cow" & count & ": ")
+            ID(count) = Console.ReadLine()
+            While Len(ID(count)) <> 3
+                Console.Write("Invalid input. Please re-enter. _ ")
+                ID(count) = Console.ReadLine()
+            End While
+        Next
+
+        'initialisation of array for milk yield
+        For day = 1 To 7
+            For count = 1 To HerdStrength
+                MilkYield(count, day) = 0
+            Next
+        Next
+
+        'input and validation of milk yields of every cow for a week
+        For day = 1 To 7
+            Do
+                Console.WriteLine()
+                Console.Write("Input the ID of the cow milked. _ ") 'input and validation of ID to be looked up
+                IDi = Console.ReadLine()
+                While Len(IDi) <> 3
+                    Console.Write("Invalid input. Please re-enter. _ ")
+                    IDi = Console.ReadLine()
+                End While
+
+                For count = 1 To HerdStrength  'input, validation and accumilaion of milk yield volume for given cow
+                    If ID(count) = IDi Then
+                        Console.Write("Input the volume of milk given by this cow. _ ")
+                        MilkYieldi = Console.ReadLine()
+                        While Not IsNumeric(MilkYieldi) Or MilkYieldi < 0 Or mid(MilkYieldi, len(MilkYieldi) - 1, 1) <> "."
+                            Console.Write("Invalid input. Please re-enter. _ ")
+                            MilkYieldi = Console.ReadLine()
+                        End While
+                        MilkYield(count, day) = MilkYield(count, day) + MilkYieldi
+                        Exit For
+                    End If
+                Next
+
+                Console.Write("Done for the day? (Y/N) _ ")
+                ans = Console.ReadLine()
+                While ans <> "Y" And ans <> "N"
+                    Console.Write("Invalid input. Please re-enter. _ ")
+                    ans = Console.ReadLine()
+                End While
+
+            Loop Until ans = "Y"
+        Next
+
+        'TASK 2
+        Dim TotalWeeklyVolume, AvgYieldpCow
+
+        'calculation of total weekly volume
+        TotalWeeklyVolume = 0
+        For day = 1 To 7
+            For count = 1 To HerdStrength
+                TotalWeeklyVolume = TotalWeeklyVolume + MilkYield(count, day)
+            Next
+        Next
+
+        'calculation of average yield per cow
+        AvgYieldpCow = TotalWeeklyVolume / HerdStrength
+
+        'rounding off of total weekly volume and average yield per cow
+        If val(right(TotalWeeklyVolume, 1)) < 5 Then
+            TotalWeeklyVolume = Integer(TotalWeeklyVolume)
+        Else
+            TotalWeeklyVolume = Integer(TotalWeeklyVolume + 1)
+        End If
+
+        For count = 1 To len(AvgYieldpCow)
+            If mid(AvgYieldpCow, count, 1) = "." Then
+                If val(mid(AvgYieldpCow, (count + 1), 1)) < 5 Then
+                    AvgYieldpCow = Integer(AvgYieldpCow)
+                Else
+                    AvgYieldpCow = Integer(AvgYieldpCow + 1)
+                End If
+                Exit For
+            End If
+        Next
+
+        'printing total weekly volume and average yield per cow
+        console.writeline()
+        Console.writeline("The total weekly volume: " & TotalWeeklyVolume)
+        console.writeline("The average yield per cow: " & AvgYieldpCow)
+
+        'TASK 3
+        Dim HighestYield, YieldThreshold, MaxDays, DayCount
+        Dim HighestYieldID As String
+        Dim WeeklyYield(HerdStrength)
+
+        'initialisation of array for weekly yield
+        For count = 1 To HerdStrength
+            WeeklyYield(count) = 0
+        Next
+
+        'calculation and storage of weekly yield for every cow
+        For count = 1 To HerdStrength
+            For day = 1 To 7
+                WeeklyYield(count) = WeeklyYield(count) + MilkYield(count, day)
+            Next
+        Next
+
+        'finding the cow with highest weekly yield
+        HighestYield = 0
+        For count = 1 To HerdStrength
+            If WeeklyYield(count) > HighestYield Then
+                HighestYield = WeeklyYield(count)
+                HighestYieldID = ID(count)
+            End If
+        Next
+
+        'printing yield and ID of this cow
+        console.writeline()
+        console.writeline("Cow that produced most milk this week-")
+        console.writeline("ID: " & HighestYieldID)
+        console.writeline("Yield: " & HighestYield)
+
+
+        'assigning values to constants and initialising variables
+        MaxDays = 4
+        YieldThreshold = 12.0
+        CowCount = 0
+
+        'finding and printing the IDs of the cows with unacceptably low yields
+        console.writeline()
+        console.writeline("IDs of cows with yield below " & YieldThreshold & " litres for " & MaxDays & " days or more-")
+        For count = 1 To HerdStrength
+            DayCount = 0
+            For day = 1 To 7
+                If MilkYield(count, day) < YieldThreshold Then
+                    DayCount = DayCount + 1
+                End If
+            Next
+            If DayCount >= MaxDays Then
+                console.writeline(ID(count))
+            End If
+        Next
+
+        console.read()
+
+    End Sub
